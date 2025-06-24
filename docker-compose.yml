@@ -1,0 +1,35 @@
+services:
+ 
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: aleksey
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: myDB
+    ports:
+      - 5444:5432
+    # volumes:
+    # - pgdata:/var/lib/postgresql/data
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      - db
+    volumes:
+      - ./migrations:/migrations
+      - ./migrations/run-migrations.sh:/docker-entrypoint.sh
+    environment:
+      MIGRATE_DATABASE_URL: postgres://aleksey:qwerty@db:5432/myDB?sslmode=disable
+    entrypoint: /docker-entrypoint.sh
+  app:
+    container_name: app
+    build: .
+    depends_on:
+      - db
+      - migrate
+    ports:
+      - 8000:8000
+# volumes:
+#   pgdata:
+#     driver: local

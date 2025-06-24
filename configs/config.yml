@@ -1,0 +1,8 @@
+port: 8000
+env: local
+db:
+  host: db
+  port: 5432
+  user: aleksey
+  database: myDB
+  sslmode: disable
